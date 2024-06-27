@@ -14,8 +14,6 @@ const routes = new Router({
   prefix: '/api/v1',
 });
 
-routes.use(bodyParser());
-
 routes.use(async (ctx, next) => {
   try {
     await next();
@@ -48,6 +46,8 @@ routes.use(async (ctx, next) => {
     };
   }
 });
+
+routes.use(bodyParser());
 
 routes.use(authRoute.routes());
 routes.use(userRoute.routes());

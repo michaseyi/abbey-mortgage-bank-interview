@@ -6,7 +6,6 @@ import { User } from './user';
 export class Session extends BaseEntity {
   @ManyToOne(() => User, (user) => user.sessions, {
     onDelete: 'CASCADE',
-    eager: true,
   })
   user: User;
 

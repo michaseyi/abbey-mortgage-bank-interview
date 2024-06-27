@@ -1,4 +1,12 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 import BaseEntity from './base_entity';
 import { Session } from './session';
@@ -30,8 +38,25 @@ export class User extends BaseEntity {
   @OneToMany(() => Thought, (thought) => thought.user)
   thoughts?: Thought[];
 
+  @OneToMany(() => UserFollowers, (userFollowers) => userFollowers.user)
+  following?: UserFollowers[];
+
+  @OneToMany(() => UserFollowers, (userFollowers) => userFollowers.following)
+  followers?: UserFollowers[];
+
   constructor(email: string) {
     super();
     this.email = email;
   }
+}
+
+@Entity('user_following_user')
+export class UserFollowers extends BaseEntity {
+  @ManyToOne(() => User, (user) => user.following)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
+
+  @ManyToOne(() => User, (user) => user.followers)
+  @JoinColumn({ name: 'following_id' })
+  following!: User;
 }

@@ -75,7 +75,7 @@ export const protectedRoute: Middleware<StateWithUser> = async (ctx, next) => {
 export const signOut: Middleware<StateWithUser> = async (ctx) => {
   const sessionId = ctx.state.user.sessionId;
 
-  repositories.session.deleteSession({ id: sessionId });
+  await repositories.session.deleteSession({ id: sessionId });
 
   ctx.status = 200;
   ctx.body = {
@@ -117,5 +117,42 @@ export const verifyEmailSignInFlow: Middleware<StateWithUser> = async (ctx) => {
 
   ctx.body = {
     sessionToken,
+  };
+};
+
+export const getSessions: Middleware<StateWithUser> = async (ctx) => {
+  const { id } = ctx.state.user;
+
+  const start =
+    ctx.query.start && !(ctx.query.start instanceof Array)
+      ? parseInt(ctx.query.start)
+      : 0;
+
+  const limit =
+    ctx.query.limit && !(ctx.query.limit instanceof Array)
+      ? parseInt(ctx.query.limit)
+      : 10;
+
+  const sessions = await repositories.session.findMany(
+    { user: { id } },
+    start,
+    limit,
+  );
+
+  ctx.body = {
+    sessions,
+  };
+};
+
+export const deleteSession: Middleware<StateWithUser> = async (ctx) => {
+  const { id } = ctx.state.user;
+
+  const sessionId = ctx.params.id;
+
+  await repositories.session.deleteSession({ user: { id }, id: sessionId });
+
+  ctx.status = 200;
+  ctx.body = {
+    message: 'Session deleted',
   };
 };

@@ -43,10 +43,49 @@ export async function updateUsername(
   await repositories.user.updateUser({ id, updates: { username } }, tx);
 }
 
-export async function updateEmail(id: string, email: string) {
+export async function updateEmail(
+  id: string,
+  email: string,
+  tx?: EntityManager,
+) {
   if (findUser(undefined, email) !== null) {
     throw new ConflictError('Email already exists');
   }
 
   // create new auth flow
+}
+
+export async function createThought(
+  userId: string,
+  content: string,
+  tx?: EntityManager,
+) {
+  const thought = await repositories.thought.createThought(
+    { userId, content },
+    tx,
+  );
+  return thought;
+}
+
+export async function deleteThought(
+  id: string,
+  userId: string,
+  tx?: EntityManager,
+) {
+  await repositories.thought.deleteThought({ user: { id: userId }, id }, tx);
+}
+
+export async function getThoughts(
+  userId: string,
+  skip: number,
+  take: number,
+  tx?: EntityManager,
+) {
+  const thoughts = await repositories.thought.findMany(
+    { user: { id: userId } },
+    skip,
+    take,
+    tx,
+  );
+  return thoughts;
 }

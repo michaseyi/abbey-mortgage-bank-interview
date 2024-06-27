@@ -1,7 +1,7 @@
 import { DatabaseError } from '../../utils/error';
 import db from '../../database/db';
 import models, { Session, User } from '../models';
-import { EntityManager } from 'typeorm';
+import { EntityManager, FindOptionsWhere, Not } from 'typeorm';
 
 type CreateSessionParams = {
   userId: string;
@@ -26,7 +26,7 @@ export async function createSession(
   return session;
 }
 
-type FindOneSessionParams = Partial<Session>;
+type FindOneSessionParams = FindOptionsWhere<Session>;
 
 export async function deleteSession(
   params: FindOneSessionParams,
@@ -50,9 +50,27 @@ export async function findOne(
   try {
     const session = await manager
       .getRepository(models.Session)
-      .findOneBy({ ...params });
+      .findOne({ where: params, relations: ['user'] });
     return session;
   } catch (error) {
     throw new DatabaseError('Error retrieving session');
+  }
+}
+
+export async function findMany(
+  params: FindOptionsWhere<Session>,
+  skip: number,
+  take: number,
+  tx?: EntityManager,
+) {
+  const manager = tx ? tx : db;
+
+  try {
+    const sessions = await manager
+      .getRepository(models.Session)
+      .find({ where: params, skip, take });
+    return sessions;
+  } catch (error) {
+    throw new DatabaseError('Error retrieving sessions');
   }
 }

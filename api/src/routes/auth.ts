@@ -23,4 +23,16 @@ authRoute.get(
 
 authRoute.get('/me', controllers.auth.protectedRoute, controllers.user.getUser);
 
+authRoute.get(
+  '/sessions',
+  controllers.auth.protectedRoute,
+  controllers.auth.getSessions,
+);
+
+authRoute.delete(
+  '/sessions/:id',
+  controllers.auth.protectedRoute,
+  controllers.auth.deleteSession,
+);
+
 export default authRoute;

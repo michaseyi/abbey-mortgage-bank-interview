@@ -4,7 +4,10 @@ import { User } from './user';
 
 @Entity()
 export class Thought extends BaseEntity {
-  @ManyToOne(() => User, (user) => user.thoughts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.thoughts, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   user: User;
 
   @Column({ type: 'text', nullable: false })

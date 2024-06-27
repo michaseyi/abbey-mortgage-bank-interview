@@ -8,7 +8,13 @@ const db = new DataSource({
   url: config.db.uri,
   synchronize: true,
   logging: false,
-  entities: [models.AuthFlow, models.Session, models.Thought, models.User],
+  entities: [
+    models.AuthFlow,
+    models.Session,
+    models.Thought,
+    models.User,
+    models.UserFollowers,
+  ],
   migrations: [],
   subscribers: [],
 });

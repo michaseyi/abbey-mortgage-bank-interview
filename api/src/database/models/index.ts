@@ -1,4 +1,4 @@
-import { User } from './user';
+import { User, UserFollowers } from './user';
 import { AuthFlow } from './auth_flow';
 import { Session } from './session';
 import { Thought } from './thought';
@@ -13,6 +13,7 @@ const models = {
   AuthFlow,
   Session,
   Thought,
+  UserFollowers,
 };
 
 export default models;

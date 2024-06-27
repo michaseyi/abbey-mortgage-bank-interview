@@ -21,6 +21,8 @@ export const getUser: Middleware<StateWithUser> = async (ctx) => {
     username: user.username ?? ' ',
     email: user.email,
     bio: user.bio ?? '',
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 };
 
@@ -89,5 +91,67 @@ export const updateUsername: Middleware<StateWithUser> = async (ctx) => {
   ctx.status = 200;
   ctx.body = {
     message: 'Username updated',
+  };
+};
+
+type CreateThoughtBody = {
+  content: string;
+};
+
+function validateCreateThoughtBody(value: any): value is CreateThoughtBody {
+  if (typeof value !== 'object') {
+    return false;
+  }
+
+  if (typeof value.content !== 'string') {
+    return false;
+  }
+
+  return true;
+}
+
+export const createThought: Middleware<StateWithUser> = async (ctx) => {
+  if (!validateCreateThoughtBody(ctx.request.body)) {
+    ctx.throw(400);
+    return;
+  }
+  const { content } = ctx.request.body;
+
+  const thought = await services.user.createThought(ctx.state.user.id, content);
+
+  ctx.status = 200;
+  ctx.body = {
+    thought,
+  };
+};
+
+export const deleteThought: Middleware<StateWithUser> = async (ctx) => {
+  const { id } = ctx.params;
+
+  await services.user.deleteThought(ctx.state.user.id, id);
+
+  ctx.status;
+};
+
+export const getThoughts: Middleware<StateWithUser> = async (ctx) => {
+  const id =
+    ctx.query.userId && !(ctx.query.userId instanceof Array)
+      ? ctx.query.userId
+      : ctx.state.user.id;
+  const start =
+    ctx.query.start && !(ctx.query.start instanceof Array)
+      ? parseInt(ctx.query.start)
+      : 0;
+
+  const limit =
+    ctx.query.limit && !(ctx.query.limit instanceof Array)
+      ? parseInt(ctx.query.limit)
+      : 10;
+
+  const thoughts = await services.user.getThoughts(id, start, limit);
+
+  ctx.status;
+  ctx.body = {
+    thoughts,
   };
 };

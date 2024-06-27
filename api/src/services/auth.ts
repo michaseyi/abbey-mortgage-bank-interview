@@ -5,12 +5,12 @@ import templates from '../email_templates';
 import { NotFoundError, UnauthorizedError } from '../utils/error';
 import { findUser, createUser } from './user';
 import db from '../database/db';
-import { Session } from '../database/models';
 
 export async function startEmailSignInFlow(email: string): Promise<string> {
   const token = generateToken(6);
 
   // TODO: Set a timer to delete the auth flow after a certain amount of time
+
   const authFlow = await repositories.authFlow.createAuthFlow({
     email,
     token,
@@ -21,7 +21,7 @@ export async function startEmailSignInFlow(email: string): Promise<string> {
     email,
     'Email Sign In Token',
     templates.verifyEmailSignIn({ token }),
-  );
+  ).catch((error) => {});
 
   return authFlow.id;
 }

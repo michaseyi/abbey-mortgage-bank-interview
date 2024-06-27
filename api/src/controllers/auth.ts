@@ -1,5 +1,6 @@
 import { Middleware } from 'koa';
 import services from '../services';
+import repositories from '../database/repositories';
 
 type SignInWithEmailBody = {
   email: string;
@@ -33,13 +34,14 @@ export const startEmailSignInFlow: Middleware = async (ctx) => {
       flowId,
     };
   } catch (error) {
-    ctx.throw(400);
+    ctx.throw(500);
   }
 };
 
-type StateWithUser = {
+export type StateWithUser = {
   user: {
     id: string;
+    sessionId: string;
   };
 };
 
@@ -60,13 +62,25 @@ export const protectedRoute: Middleware<StateWithUser> = async (ctx, next) => {
     return;
   }
 
-  const jwtToken = authorizationTokenSplit[1];
+  const sessionToken = authorizationTokenSplit[1];
 
   ctx.state.user = {
-    id: 'id',
+    sessionId: sessionToken,
+    id: await services.auth.getUserFromSessionToken(sessionToken),
   };
 
-  next();
+  await next();
+};
+
+export const signOut: Middleware<StateWithUser> = async (ctx) => {
+  const sessionId = ctx.state.user.sessionId;
+
+  repositories.session.deleteSession({ id: sessionId });
+
+  ctx.status = 200;
+  ctx.body = {
+    message: 'Signed out',
+  };
 };
 
 type VerifyEmailBody = {
@@ -99,7 +113,9 @@ export const verifyEmailSignInFlow: Middleware<StateWithUser> = async (ctx) => {
 
   const { flowId, token } = ctx.request.body;
 
+  const sessionToken = await services.auth.verifyEmailSignInFlow(flowId, token);
+
   ctx.body = {
-    token: 'jwt',
+    sessionToken,
   };
 };

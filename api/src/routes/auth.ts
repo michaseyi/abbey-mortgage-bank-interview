@@ -15,4 +15,12 @@ authRoute.post(
   controllers.auth.verifyEmailSignInFlow,
 );
 
+authRoute.get(
+  '/signout',
+  controllers.auth.protectedRoute,
+  controllers.auth.signOut,
+);
+
+authRoute.get('/me', controllers.auth.protectedRoute, controllers.user.getUser);
+
 export default authRoute;

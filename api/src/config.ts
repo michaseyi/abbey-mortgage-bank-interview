@@ -17,14 +17,15 @@ type Config = {
     expiresIn: string;
   };
   smtp: {
-    host: string;
+    service: string;
+    authType: string;
+    clientId: string;
     user: string;
-    password: string;
-    from: string;
+    clientSecret: string;
+    refreshToken: string;
+    accessToken: string;
   };
 };
-
-
 
 function validateConfig(config: any): asserts config is Config {
   if (typeof config.environment !== 'string') {
@@ -53,20 +54,32 @@ function validateConfig(config: any): asserts config is Config {
     throw new Error('Config must have a jwt.expiresIn string');
   }
 
-  if (typeof config.smtp.host !== 'string') {
-    throw new Error('Config must have an smtp.host string');
+  if (typeof config.smtp.clientId !== 'string') {
+    throw new Error('Config must have an smtp.clientId string');
   }
 
   if (typeof config.smtp.user !== 'string') {
     throw new Error('Config must have an smtp.user string');
   }
 
-  if (typeof config.smtp.password !== 'string') {
-    throw new Error('Config must have an smtp.password string');
+  if (typeof config.smtp.clientSecret !== 'string') {
+    throw new Error('Config must have an smtp.clientSecret string');
   }
 
-  if (typeof config.smtp.from !== 'string') {
-    throw new Error('Config must have an smtp.from string');
+  if (typeof config.smtp.refreshToken !== 'string') {
+    throw new Error('Config must have an smtp.refreshToken string');
+  }
+
+  if (typeof config.smtp.accessToken !== 'string') {
+    throw new Error('Config must have an smtp.accessToken string');
+  }
+
+  if (typeof config.smtp.authType !== 'string') {
+    throw new Error('Config must have an smtp.authType string');
+  }
+
+  if (typeof config.smtp.service !== 'string') {
+    throw new Error('Config must have an smtp.service string');
   }
 }
 
@@ -84,10 +97,13 @@ const config = {
     expiresIn: env.JWT_EXPIRES_IN,
   },
   smtp: {
-    host: env.SMTP_HOST,
+    clientId: env.SMTP_CLIENT_ID,
     user: env.SMTP_USER,
-    password: env.SMTP_PASSWORD,
-    from: env.SMTP_FROM,
+    clientSecret: env.SMTP_CLIENT_SECRET,
+    accessToken: env.SMTP_ACCESS_TOKEN,
+    refreshToken: env.SMTP_REFRESH_TOKEN,
+    service: env.SMTP_SERVICE,
+    authType: env.SMTP_AUTH_TYPE,
   },
 };
 

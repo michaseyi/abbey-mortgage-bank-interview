@@ -1,6 +1,6 @@
 # Drop That Thought -- Submission for Abbey Mortgage Bank Interview
 
-It is a simple app to drop your thoughts with your friends.
+It is a simple app to drop your thoughts with your frens.
 
 ## Features
 

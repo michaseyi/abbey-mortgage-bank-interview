@@ -16,8 +16,8 @@ const db = new DataSource({
     models.User,
     models.UserFollowers,
   ],
-  migrations: [],
   subscribers: [],
+  migrations: [],
 });
 
 export default db;

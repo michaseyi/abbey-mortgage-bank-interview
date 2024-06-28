@@ -47,6 +47,12 @@ routes.use(async (ctx, next) => {
   }
 });
 
+routes.get('/status', async (ctx) => {
+  ctx.body = {
+    status: 'ok',
+  };
+});
+
 routes.use(bodyParser());
 
 routes.use(authRoute.routes());

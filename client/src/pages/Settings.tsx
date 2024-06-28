@@ -80,6 +80,7 @@ const Settings = () => {
 			<div className="max-w-2xl w-full space-y-8 border-secondary_/30 border p-8 rounded-xl shadow-lg">
 				<h2 className="text-center text-2xl font-extrabold">Edit your profile</h2>
 
+				<h3 className="text-lg font-semibold text-center">{user.email}</h3>
 				<form className="space-y-4" onSubmit={handleUserProfileUpdate}>
 					<div>
 						<label htmlFor="bio" className="block text-sm font-medium text-secondary_/80">

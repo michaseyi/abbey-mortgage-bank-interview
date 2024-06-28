@@ -148,6 +148,9 @@ export async function unfollowUser(
   }
 
   await repositories.user.unfollowUser(userId, followId, tx);
+
+  // delete feed from unfollowed user
+  deleteFeedFromUnfollowedUser(userId, followId);
 }
 
 export async function createFeedForFollowers(
@@ -159,12 +162,12 @@ export async function createFeedForFollowers(
     const followers = await repositories.user.getFollowers(userId, 0);
 
     for (const follower of followers) {
-      try {
-        await repositories.feed.createFeed({
+      repositories.feed
+        .createFeed({
           userId: follower.follower.id,
           thoughtId,
-        });
-      } catch (error) {}
+        })
+        .catch(() => {});
     }
   }, 0);
 }
@@ -182,9 +185,31 @@ export async function createFeedFromFollowedUser(
 
     for (const thought of thoughts) {
       // if you follow and unfollow someone, there might be dupllicate feeds and the db will see that as a conflict so just ignore any errors
-      try {
-        await repositories.feed.createFeed({ userId, thoughtId: thought.id });
-      } catch (error) {}
+      repositories.feed
+        .createFeed({ userId, thoughtId: thought.id })
+        .catch(() => {});
+    }
+  }, 0);
+}
+
+export async function deleteFeedFromUnfollowedUser(
+  userId: string,
+  followedUserId: string,
+) {
+  // This would usually be a background job, or kept in a queue for processing by a feed server
+  setTimeout(async () => {
+    const thoughts = await repositories.thought.findMany(
+      { user: { id: followedUserId } },
+      0,
+    );
+
+    for (const thought of thoughts) {
+      repositories.feed
+        .deleteFeed({
+          user: { id: userId },
+          thought: { id: thought.id },
+        })
+        .catch(() => {});
     }
   }, 0);
 }

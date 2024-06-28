@@ -28,3 +28,18 @@ The project is built with the following technologies:
 - React
 - Typescript
 - TailwindCSS
+- Axios
+- React Query
+
+## Preview
+
+![Sign in](/preview/signin.png "Sign in")
+![Verify token](/preview/verify-token.png "Verify token")
+![Home](/preview/home.png "Home")
+![Settings](/preview/edit-profile.png "Settings")
+![Frens](/preview/thought-posters-you-follow.png "Your frens")
+![Find frens](/preview/find-frens.png "Find frens")
+
+## Live Demo
+
+[Demo link here](https://abbey-mortgage-bank-interview.vercel.app)

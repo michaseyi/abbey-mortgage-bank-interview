@@ -21,7 +21,10 @@ async function startEmailSignInFlow(email) {
         token,
     });
     // TODO: Handle email sending errors. Await or not?
-    (0, mailer_1.sendEmail)(email, 'Email Sign In Token', email_templates_1.default.verifyEmailSignIn({ token })).catch((error) => { });
+    try {
+        await (0, mailer_1.sendEmail)(email, 'Email Sign In Token', email_templates_1.default.verifyEmailSignIn({ token }));
+    }
+    catch (error) { }
     return authFlow.id;
 }
 async function verifyEmailSignInFlow(flowId, token) {

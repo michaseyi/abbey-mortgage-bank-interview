@@ -17,11 +17,13 @@ export async function startEmailSignInFlow(email: string): Promise<string> {
   });
 
   // TODO: Handle email sending errors. Await or not?
-  sendEmail(
-    email,
-    'Email Sign In Token',
-    templates.verifyEmailSignIn({ token }),
-  ).catch((error) => {});
+  try {
+    await sendEmail(
+      email,
+      'Email Sign In Token',
+      templates.verifyEmailSignIn({ token }),
+    );
+  } catch (error) {}
 
   return authFlow.id;
 }

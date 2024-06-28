@@ -34,7 +34,7 @@ export async function deleteThought(
   const manager = tx ? tx : db;
 
   try {
-    await manager.getRepository(models.Thought).delete({ ...params });
+    await manager.getRepository(models.Thought).delete(params);
   } catch (error) {
     throw new DatabaseError('Error deleting thought');
   }

@@ -19,4 +19,12 @@ userRoute.delete('/thoughts/:id', controllers.user.deleteThought);
 
 userRoute.get('/thoughts', controllers.user.getThoughts);
 
+userRoute.get('/follow/:id', controllers.user.followUser);
+
+// userRoute.get('/unfollow/:id', controllers.user.unfollowUser);
+
+// userRoute.get('/followers', controllers.user.getFollowers);
+
+// userRoute.get('/following', controllers.user.getFollowing);
+
 export default userRoute;

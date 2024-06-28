@@ -2,8 +2,11 @@ import Koa from 'koa';
 import routes from './routes';
 import config from './config';
 import db from './database/db';
+import cors from '@koa/cors';
 
 const app = new Koa();
+
+app.use(cors());
 
 app.use(routes.routes());
 

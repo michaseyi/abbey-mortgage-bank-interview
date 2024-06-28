@@ -1,7 +1,8 @@
-import { ConflictError } from '../utils/error';
+import { ConflictError, NotFoundError } from '../utils/error';
 import repositories from '../database/repositories';
-import { EntityManager } from 'typeorm';
+import { EntityManager, Not } from 'typeorm';
 import { User } from '../database/models';
+import db from 'database/db';
 
 export async function createUser(email: string, tx?: EntityManager) {
   const exisitingUser = await repositories.user.findOne({ email }, tx);
@@ -88,4 +89,21 @@ export async function getThoughts(
     tx,
   );
   return thoughts;
+}
+
+export async function followUser(
+  userId: string,
+  followId: string,
+  tx?: EntityManager,
+) {
+  if (userId === followId) {
+    throw new ConflictError('Cannot follow self');
+  }
+  const follow = await repositories.user.findOne({ id: followId }, tx);
+
+  if (follow === null) {
+    throw new NotFoundError('User to be followed not found');
+  }
+
+  await repositories.user.followUser(userId, followId, tx);
 }

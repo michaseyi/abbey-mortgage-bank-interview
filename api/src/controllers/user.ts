@@ -128,9 +128,12 @@ export const createThought: Middleware<StateWithUser> = async (ctx) => {
 export const deleteThought: Middleware<StateWithUser> = async (ctx) => {
   const { id } = ctx.params;
 
-  await services.user.deleteThought(ctx.state.user.id, id);
+  await services.user.deleteThought(id, ctx.state.user.id);
 
-  ctx.status;
+  ctx.status = 200;
+  ctx.body = {
+    message: 'Thought deleted',
+  };
 };
 
 export const getThoughts: Middleware<StateWithUser> = async (ctx) => {
@@ -150,8 +153,17 @@ export const getThoughts: Middleware<StateWithUser> = async (ctx) => {
 
   const thoughts = await services.user.getThoughts(id, start, limit);
 
-  ctx.status;
   ctx.body = {
     thoughts,
+  };
+};
+
+export const followUser: Middleware<StateWithUser> = async (ctx) => {
+  const { id } = ctx.params;
+
+  await services.user.followUser(ctx.state.user.id, id);
+
+  ctx.body = {
+    message: 'User followed',
   };
 };

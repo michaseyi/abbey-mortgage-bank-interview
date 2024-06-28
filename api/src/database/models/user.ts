@@ -6,6 +6,7 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  Unique,
 } from 'typeorm';
 
 import BaseEntity from './base_entity';
@@ -51,12 +52,19 @@ export class User extends BaseEntity {
 }
 
 @Entity('user_following_user')
+@Unique(['user', 'following'])
 export class UserFollowers extends BaseEntity {
-  @ManyToOne(() => User, (user) => user.following)
+  @ManyToOne(() => User, (user) => user.following, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  @ManyToOne(() => User, (user) => user.followers)
+  @ManyToOne(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'following_id' })
   following!: User;
+
+  constructor(user: User, following: User) {
+    super();
+    this.user = user;
+    this.following = following;
+  }
 }

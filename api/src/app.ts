@@ -10,14 +10,14 @@ app.use(cors());
 
 app.use(routes.routes());
 
-db.initialize()
-  .then(() => {
-    console.log('Database has been initialized!');
+app.listen(config.app.port, () => {
+  console.log('Server has started!');
 
-    app.listen(config.app.port, () => {
-      console.log('Server has started!');
+  db.initialize()
+    .then(() => {
+      console.log('Database has been initialized!');
+    })
+    .catch((err) => {
+      console.error('Error during database initialization:', err);
     });
-  })
-  .catch((err) => {
-    console.error('Error during database initialization:', err);
-  });
+});

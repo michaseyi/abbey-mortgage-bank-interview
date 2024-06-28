@@ -12,6 +12,7 @@ import {
 import BaseEntity from './base_entity';
 import { Session } from './session';
 import { Thought } from './thought';
+import { Feed } from './feed';
 
 @Entity()
 export class User extends BaseEntity {
@@ -39,7 +40,10 @@ export class User extends BaseEntity {
   @OneToMany(() => Thought, (thought) => thought.user)
   thoughts?: Thought[];
 
-  @OneToMany(() => UserFollowers, (userFollowers) => userFollowers.user)
+  @OneToMany(() => Feed, (feed) => feed.user)
+  feeds?: Feed[];
+
+  @OneToMany(() => UserFollowers, (userFollowers) => userFollowers.follower)
   following?: UserFollowers[];
 
   @OneToMany(() => UserFollowers, (userFollowers) => userFollowers.following)
@@ -51,12 +55,12 @@ export class User extends BaseEntity {
   }
 }
 
-@Entity('user_following_user')
-@Unique(['user', 'following'])
+@Entity('follower_following')
+@Unique(['follower', 'following'])
 export class UserFollowers extends BaseEntity {
   @ManyToOne(() => User, (user) => user.following, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user!: User;
+  @JoinColumn({ name: 'follower_id' })
+  follower!: User;
 
   @ManyToOne(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'following_id' })
@@ -64,7 +68,7 @@ export class UserFollowers extends BaseEntity {
 
   constructor(user: User, following: User) {
     super();
-    this.user = user;
+    this.follower = user;
     this.following = following;
   }
 }

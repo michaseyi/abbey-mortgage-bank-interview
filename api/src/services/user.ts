@@ -65,6 +65,11 @@ export async function createThought(
     { userId, content },
     tx,
   );
+
+  // generate feeds
+
+  createFeedForFollowers(userId, thought.id);
+
   return thought;
 }
 
@@ -106,4 +111,94 @@ export async function followUser(
   }
 
   await repositories.user.followUser(userId, followId, tx);
+
+  // create feed for followed user
+  createFeedFromFollowedUser(userId, followId);
+}
+
+export async function getFollowing(
+  userId: string,
+  skip: number,
+  take: number,
+  tx?: EntityManager,
+) {
+  return await repositories.user.getFollowing(userId, skip, take, tx);
+}
+
+export async function getFollowers(
+  userId: string,
+  skip: number,
+  take: number,
+  tx?: EntityManager,
+) {
+  return await repositories.user.getFollowers(userId, skip, take, tx);
+}
+export async function unfollowUser(
+  userId: string,
+  followId: string,
+  tx?: EntityManager,
+) {
+  if (userId === followId) {
+    throw new ConflictError('Cannot unfollow self');
+  }
+
+  const follow = await repositories.user.findOne({ id: followId }, tx);
+  if (follow === null) {
+    throw new NotFoundError('User to be unfollowed not found');
+  }
+
+  await repositories.user.unfollowUser(userId, followId, tx);
+}
+
+export async function createFeedForFollowers(
+  userId: string,
+  thoughtId: string,
+) {
+  // This would usually be a background job, or kept in a queue for processing by a feed server
+  setTimeout(async () => {
+    const followers = await repositories.user.getFollowers(userId, 0);
+
+    for (const follower of followers) {
+      try {
+        await repositories.feed.createFeed({
+          userId: follower.follower.id,
+          thoughtId,
+        });
+      } catch (error) {}
+    }
+  }, 0);
+}
+
+export async function createFeedFromFollowedUser(
+  userId: string,
+  followedUserId: string,
+) {
+  // This would usually be a background job, or kept in a queue for processing by a feed server
+  setTimeout(async () => {
+    const thoughts = await repositories.thought.findMany(
+      { user: { id: followedUserId } },
+      0,
+    );
+
+    for (const thought of thoughts) {
+      // if you follow and unfollow someone, there might be dupllicate feeds and the db will see that as a conflict so just ignore any errors
+      try {
+        await repositories.feed.createFeed({ userId, thoughtId: thought.id });
+      } catch (error) {}
+    }
+  }, 0);
+}
+
+export async function getFeeds(
+  userId: string,
+  skip: number,
+  take: number,
+  tx?: EntityManager,
+) {
+  return await repositories.feed.findMany(
+    { user: { id: userId } },
+    skip,
+    take,
+    tx,
+  );
 }

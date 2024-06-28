@@ -56,7 +56,7 @@ export async function findOne(params: Partial<Thought>, tx?: EntityManager) {
 export async function findMany(
   params: FindOptionsWhere<Thought>,
   skip: number,
-  take: number,
+  take?: number,
   tx?: EntityManager,
 ) {
   const manager = tx ? tx : db;

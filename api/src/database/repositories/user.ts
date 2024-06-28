@@ -80,7 +80,7 @@ export async function unfollowUser(
   try {
     await manager
       .getRepository(models.UserFollowers)
-      .delete({ user: { id: userId }, following: { id: followId } });
+      .delete({ follower: { id: userId }, following: { id: followId } });
   } catch (error) {
     throw new DatabaseError('Error unfollowing user');
   }
@@ -105,10 +105,67 @@ export async function findMany(
 }
 
 export async function getFollowing(
-  id: number,
+  id: string,
   skip: number,
-  take: number,
+  take?: number,
   tx?: EntityManager,
 ) {
-  
+  const manager = tx ? tx : db;
+
+  try {
+    const following = await manager.getRepository(UserFollowers).find({
+      where: { follower: { id } },
+      relations: ['following'],
+      skip,
+      take,
+    });
+
+    return following;
+  } catch (error) {
+    throw new DatabaseError('Error retrieving users');
+  }
+}
+
+export async function getFollowers(
+  id: string,
+  skip: number,
+  take?: number,
+  tx?: EntityManager,
+) {
+  const manager = tx ? tx : db;
+
+  try {
+    const following = await manager.getRepository(UserFollowers).find({
+      where: { following: { id } },
+      relations: ['follower'],
+      skip,
+      take,
+    });
+
+    return following;
+  } catch (error) {
+    throw new DatabaseError('Error retrieving users');
+  }
+}
+
+export async function isFollowing(
+  userId: string,
+  followingId: string,
+  tx?: EntityManager,
+) {
+  const manager = tx ? tx : db;
+
+  try {
+    const following = await manager.getRepository(UserFollowers).findOne({
+      where: { follower: { id: userId }, following: { id: followingId } },
+    });
+
+    if (following !== null) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    throw new DatabaseError('Error retrieving data');
+  }
 }

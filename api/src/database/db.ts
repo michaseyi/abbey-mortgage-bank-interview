@@ -12,6 +12,7 @@ const db = new DataSource({
     models.AuthFlow,
     models.Session,
     models.Thought,
+    models.Feed,
     models.User,
     models.UserFollowers,
   ],

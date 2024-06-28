@@ -167,3 +167,75 @@ export const followUser: Middleware<StateWithUser> = async (ctx) => {
     message: 'User followed',
   };
 };
+
+export const getFollowing: Middleware<StateWithUser> = async (ctx) => {
+  const skip =
+    ctx.query.start && !(ctx.query.start instanceof Array)
+      ? parseInt(ctx.query.start)
+      : 0;
+
+  const take =
+    ctx.query.limit && !(ctx.query.limit instanceof Array)
+      ? parseInt(ctx.query.limit)
+      : 10;
+
+  const following = await services.user.getFollowing(
+    ctx.state.user.id,
+    skip,
+    take,
+  );
+
+  ctx.body = {
+    following,
+  };
+};
+
+export const getFollowers: Middleware<StateWithUser> = async (ctx) => {
+  const skip =
+    ctx.query.start && !(ctx.query.start instanceof Array)
+      ? parseInt(ctx.query.start)
+      : 0;
+
+  const take =
+    ctx.query.limit && !(ctx.query.limit instanceof Array)
+      ? parseInt(ctx.query.limit)
+      : 10;
+
+  const followers = await services.user.getFollowers(
+    ctx.state.user.id,
+    skip,
+    take,
+  );
+
+  ctx.body = {
+    followers,
+  };
+};
+
+export const unfollowUser: Middleware<StateWithUser> = async (ctx) => {
+  const { id } = ctx.params;
+
+  await services.user.unfollowUser(ctx.state.user.id, id);
+
+  ctx.body = {
+    message: 'User unfollowed',
+  };
+};
+
+export const getFeeds: Middleware<StateWithUser> = async (ctx) => {
+  const skip =
+    ctx.query.start && !(ctx.query.start instanceof Array)
+      ? parseInt(ctx.query.start)
+      : 0;
+
+  const take =
+    ctx.query.limit && !(ctx.query.limit instanceof Array)
+      ? parseInt(ctx.query.limit)
+      : 10;
+
+  const feeds = await services.user.getFeeds(ctx.state.user.id, skip, take);
+
+  ctx.body = {
+    feeds,
+  };
+};

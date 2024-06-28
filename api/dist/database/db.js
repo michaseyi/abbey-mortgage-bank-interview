@@ -19,8 +19,8 @@ const db = new typeorm_1.DataSource({
         models_1.default.User,
         models_1.default.UserFollowers,
     ],
-    migrations: [],
     subscribers: [],
+    migrations: [],
 });
 exports.default = db;
 //# sourceMappingURL=db.js.map

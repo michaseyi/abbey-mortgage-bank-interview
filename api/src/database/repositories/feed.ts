@@ -54,3 +54,16 @@ export async function findMany(
     throw new DatabaseError('Error retrieving feeds');
   }
 }
+
+export async function findOne(params: Partial<Feed>, tx?: EntityManager) {
+  const manager = tx ? tx : db;
+
+  try {
+    const feed = await manager
+      .getRepository(models.Feed)
+      .findOneBy({ ...params });
+    return feed;
+  } catch (error) {
+    throw new DatabaseError('Error retrieving feed');
+  }
+}

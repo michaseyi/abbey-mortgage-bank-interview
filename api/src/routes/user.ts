@@ -29,4 +29,7 @@ userRoute.get('/followings', controllers.user.getFollowing);
 
 userRoute.get('/feeds', controllers.user.getFeeds);
 
+userRoute.delete('/feeds/:id', controllers.user.deleteFeed);
+
+userRoute.get('/search', controllers.user.searchUsers);
 export default userRoute;

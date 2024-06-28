@@ -9,6 +9,11 @@ type Thought = {
 	createdAt: string
 }
 
+type Feed = {
+	id: string
+	thought: Thought
+}
+
 type ThoughtApi = {
 	createThought: (content: string) => Promise<AxiosResponse<Thought, any>>
 	deleteThought: (id: string) => Promise<AxiosResponse<any, any>>
@@ -18,7 +23,7 @@ type ThoughtApi = {
 		id?: string
 	) => Promise<AxiosResponse<{ thoughts: Thought[] }, any>>
 
-	fetchFeed: (start: number, limit: number) => Promise<AxiosResponse<{ thoughts: Thought[] }, any>>
+	fetchFeed: (start: number, limit: number) => Promise<AxiosResponse<{ feeds: Feed[] }, any>>
 }
 const thoughtApi: ThoughtApi = {
 	createThought: (content: string) => axiosInstance.post("/user/thoughts", { content }),
@@ -40,7 +45,7 @@ const thoughtApi: ThoughtApi = {
 		params.append("start", start.toString())
 		params.append("limit", limit.toString())
 
-		return axiosInstance.get(`/user/thoughts/feed?${params.toString()}`)
+		return axiosInstance.get(`/user/feeds?${params.toString()}`)
 	},
 }
 

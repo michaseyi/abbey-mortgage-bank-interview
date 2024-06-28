@@ -1,6 +1,6 @@
 import { ConflictError, NotFoundError } from '../utils/error';
 import repositories from '../database/repositories';
-import { EntityManager, Not } from 'typeorm';
+import { EntityManager, Like, Not } from 'typeorm';
 import { User } from '../database/models';
 import db from 'database/db';
 
@@ -201,4 +201,50 @@ export async function getFeeds(
     take,
     tx,
   );
+}
+
+export async function deleteFeed(
+  userId: string,
+  feedId: string,
+  tx?: EntityManager,
+) {
+  const feed = await repositories.feed.findOne({ id: feedId }, tx);
+
+  if (feed === null) {
+    throw new NotFoundError('Feed not found');
+  }
+  await repositories.feed.deleteFeed(
+    {
+      user: { id: userId },
+      id: feedId,
+    },
+    tx,
+  );
+}
+
+export async function searchUsers(
+  userId: string,
+  query: string,
+  skip: number,
+  take?: number,
+  tx?: EntityManager,
+) {
+  const result = await repositories.user.findMany(
+    {
+      id: Not(userId),
+      email: Like(`%${query}%`),
+    },
+    skip,
+    take,
+    tx,
+  );
+
+  const isFollowings = await Promise.all(
+    result.map((user) => repositories.user.isFollowing(userId, user.id)),
+  );
+
+  return result.map((user, i) => ({
+    ...user,
+    isFollowing: isFollowings[i],
+  }));
 }

@@ -1,36 +1,14 @@
-// src/components/Home.js
 import React, { useState, useEffect } from "react"
-// import postApi from "../api/postApi"
+
 import { toast } from "react-toastify"
 import { Loader } from "../components/Loader"
 import store from "../store"
-import { AxiosError, isAxiosError } from "axios"
+import { isAxiosError } from "axios"
 import thoughtApi from "../api/thought"
 import { useQuery } from "react-query"
 
 const Home = () => {
-	const [posts, setPosts] = useState([
-		{
-			id: 1,
-			content:
-				"Quod amet, omnis architecto doloribus corporis corrupti sequi inventore maxime voluptatum, at nihil fugit quasi iusto quos quis commodi tenetur cumque enim incidunt! Necessitatibus sequi dolor magnam aperiam? Doloribus, iusto.",
-			user: {
-				id: 1,
-				name: "John Doe",
-			},
-		},
-		{
-			id: 2,
-			content:
-				"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea corporis voluptates fugiat unde necessitatibus perferendis quas perspiciatis error odio dolor.",
-			user: {
-				id: 1,
-				name: "John Doe",
-			},
-		},
-	])
-
-	const { data, error, isLoading } = useQuery("feed", () => thoughtApi.fetchFeed(0, 10))
+	const { data, error, isLoading } = useQuery("feeds", () => thoughtApi.fetchFeed(0, 10))
 
 	useEffect(() => {
 		if (error) {
@@ -93,7 +71,7 @@ const Home = () => {
 					</button>
 				</form>
 
-				{data && data.data.thoughts.length === 0 && (
+				{data && data.data.feeds.length === 0 && (
 					<p className="text-center border border-secondary_/30 rounded-md py-8 px-3">
 						Nothing to see here
 					</p>
@@ -101,11 +79,11 @@ const Home = () => {
 
 				{data && (
 					<div className="space-y-6">
-						{data.data.thoughts.map((thought) => (
-							<div key={thought.id} className="border border-secondary_/30 p-4 rounded-xl">
-								<p className="text-sm">{thought.content}</p>
+						{data.data.feeds.map((feed) => (
+							<div key={feed.id} className="border border-secondary_/30 p-4 rounded-xl">
+								<p className="text-sm">{feed.thought.content}</p>
 								<p className="text-xs text-secondary_/60 text-right">
-									Posted by {thought.user.email}
+									Posted by {feed.thought.user.email}
 								</p>
 							</div>
 						))}

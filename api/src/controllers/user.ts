@@ -179,14 +179,14 @@ export const getFollowing: Middleware<StateWithUser> = async (ctx) => {
       ? parseInt(ctx.query.limit)
       : 10;
 
-  const following = await services.user.getFollowing(
+  const followings = await services.user.getFollowing(
     ctx.state.user.id,
     skip,
     take,
   );
 
   ctx.body = {
-    following,
+    followings,
   };
 };
 
@@ -237,5 +237,45 @@ export const getFeeds: Middleware<StateWithUser> = async (ctx) => {
 
   ctx.body = {
     feeds,
+  };
+};
+
+export const deleteFeed: Middleware<StateWithUser> = async (ctx) => {
+  const { id } = ctx.params;
+
+  await services.user.deleteFeed(ctx.state.user.id, id);
+
+  ctx.body = {
+    message: 'Feed deleted',
+  };
+};
+
+export const searchUsers: Middleware<StateWithUser> = async (ctx) => {
+  if (typeof ctx.query.q !== 'string') {
+    ctx.body = {
+      result: [],
+    };
+    return;
+  }
+
+  const skip =
+    ctx.query.start && !(ctx.query.start instanceof Array)
+      ? parseInt(ctx.query.start)
+      : 0;
+
+  const take =
+    ctx.query.limit && !(ctx.query.limit instanceof Array)
+      ? parseInt(ctx.query.limit)
+      : 10;
+
+  const result = await services.user.searchUsers(
+    ctx.state.user.id,
+    ctx.query.q,
+    skip,
+    take,
+  );
+
+  ctx.body = {
+    result,
   };
 };

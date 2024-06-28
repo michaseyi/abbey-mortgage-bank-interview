@@ -1,7 +1,7 @@
 import { DatabaseError } from '../../utils/error';
 import db from '../db';
 import models, { User, UserFollowers } from '../models';
-import { EntityManager } from 'typeorm';
+import { EntityManager, FindOptionsWhere } from 'typeorm';
 
 type CreateUserParams = {
   email: string;
@@ -22,9 +22,10 @@ export async function createUser(params: CreateUserParams, tx?: EntityManager) {
   return user;
 }
 
-type FindOneUserParam = Partial<User>;
-
-export async function findOne(params: FindOneUserParam, tx?: EntityManager) {
+export async function findOne(
+  params: FindOptionsWhere<User>,
+  tx?: EntityManager,
+) {
   const manager = tx ? tx : db;
 
   try {
@@ -87,9 +88,9 @@ export async function unfollowUser(
 }
 
 export async function findMany(
-  params: FindOneUserParam,
+  params: FindOptionsWhere<User>,
   skip: number,
-  take: number,
+  take?: number,
   tx?: EntityManager,
 ) {
   const manager = tx ? tx : db;

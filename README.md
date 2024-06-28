@@ -34,6 +34,7 @@ The project is built with the following technologies:
 ## Preview
 
 ![Sign in](/preview/signin.png "Sign in")
+![Email](/preview/email.png "Email")
 ![Verify token](/preview/verify-token.png "Verify token")
 ![Home](/preview/home.png "Home")
 ![Settings](/preview/edit-profile.png "Settings")
